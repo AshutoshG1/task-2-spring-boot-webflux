@@ -30,7 +30,9 @@ public class UserController {
     @PostMapping("/login")
     public Mono<ResponseEntity<TokenResponse>> login(@RequestBody LoginDto loginDto) {
         return userService.verifyLogin(loginDto)
-                .map(token -> ResponseEntity.ok(new TokenResponse(token)))
-                .onErrorResume(e -> Mono.just(ResponseEntity.status(401).body(new TokenResponse("Invalid credentials"))));
+                .map(token -> ResponseEntity.ok(new TokenResponse(token))) //
+                .onErrorResume(e -> {
+                    return Mono.just(ResponseEntity.status(401).body(new TokenResponse("Invalid credentials")));
+                });
     }
 }
