@@ -2,9 +2,11 @@ package com.techieAshutosh.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
     private String firstName;
     private String lastName;
@@ -13,17 +15,7 @@ public class UserDto {
     private String password;
     private String userRole;
 
-    public UserDto() {
-    }
 
-    public UserDto(String firstName, String lastName, String username, String email, String password, String userRole) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.userRole = userRole;
-    }
 
     public String getFirstName() {
         return firstName;

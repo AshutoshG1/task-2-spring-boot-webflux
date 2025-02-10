@@ -24,12 +24,14 @@ public class BookService {
 
     public Mono<Book> getBookById(String id) {
         return bookRepository.findById(id);
+        
     }
 
     public Mono<Book> createBook(Book book) {
         book.setCreatedDate(new Date());
         book.setModifiedDate(new Date());
-        return bookRepository.save(book);
+        Mono<Book> save = bookRepository.save(book);
+        return save;
     }
 
     public Mono<Book> updateBook(String id, Book updatedBook) {

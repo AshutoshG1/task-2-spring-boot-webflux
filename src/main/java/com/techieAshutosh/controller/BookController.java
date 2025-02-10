@@ -25,10 +25,9 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<Book>> getBookById(@PathVariable String id) {
-        return bookService.getBookById(id)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+    public Mono<Book> getBookById(@PathVariable String id) {
+        return bookService.getBookById(id);
+
     }
 
     @PostMapping
@@ -38,10 +37,9 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<Book>> updateBook(@PathVariable String id, @RequestBody Book updatedBook) {
-        return bookService.updateBook(id, updatedBook)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+    public Mono<Book> updateBook(@PathVariable String id, @RequestBody Book updatedBook) {
+        return bookService.updateBook(id, updatedBook);
+
     }
 
     @DeleteMapping("/{id}")

@@ -1,7 +1,9 @@
 package com.techieAshutosh.model;
 
+import jakarta.annotation.Generated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,6 +12,7 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "books")
 public class Book {
     @Id
@@ -20,17 +23,7 @@ public class Book {
     private Date createdDate;
     private Date modifiedDate;
 
-    public Book() {
-    }
 
-    public Book(String id, String title, String author, Integer publicationYear, Date createdDate, Date modifiedDate) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.publicationYear = publicationYear;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
-    }
 
     public String getId() {
         return id;
