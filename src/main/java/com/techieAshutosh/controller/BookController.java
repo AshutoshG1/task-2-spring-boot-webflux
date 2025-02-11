@@ -13,6 +13,8 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/books")
 public class BookController {
 
+    //http://localhost:8080/webjars/swagger-ui/index.html
+
     private final BookService bookService;
 
     public BookController(BookService bookService) {
