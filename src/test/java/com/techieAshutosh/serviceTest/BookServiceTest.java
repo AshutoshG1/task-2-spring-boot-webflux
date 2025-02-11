@@ -1,14 +1,14 @@
 package com.techieAshutosh.serviceTest;
 
-
 import com.techieAshutosh.model.Book;
 import com.techieAshutosh.repository.BookRepository;
 import com.techieAshutosh.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -17,6 +17,7 @@ import java.util.Date;
 
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class BookServiceTest {
 
     @Mock
@@ -25,16 +26,22 @@ class BookServiceTest {
     @InjectMocks
     private BookService bookService;
 
+    private Book book1;
+    private Book book2;
+    private Book newBook;
+    private Book updatedBook;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        Date now = new Date();
+        book1 = new Book("1", "Book One", "Author One", 2021, now, now);
+        book2 = new Book("2", "Book Two", "Author Two", 2022, now, now);
+        newBook = new Book(null, "Book Created", "New Author", 2023, null, null);
+        updatedBook = new Book("1", "Updated Title", "Updated Author", 2023, now, now);
     }
 
     @Test
     void testGetAllBooks() {
-        Book book1 = new Book("1", "Book One", "Author One", 2021, new Date(), new Date());
-        Book book2 = new Book("2", "Book Two", "Author Two", 2022, new Date(), new Date());
-
         when(bookRepository.findAll()).thenReturn(Flux.just(book1, book2));
 
         StepVerifier.create(bookService.getAllBooks())
@@ -46,12 +53,10 @@ class BookServiceTest {
 
     @Test
     void testGetBookById() {
-        Book book = new Book("1", "Book One", "Author One", 2021, new Date(), new Date());
-
-        when(bookRepository.findById("1")).thenReturn(Mono.just(book));
+        when(bookRepository.findById("1")).thenReturn(Mono.just(book1));
 
         StepVerifier.create(bookService.getBookById("1"))
-                .expectNext(book)
+                .expectNext(book1)
                 .verifyComplete();
 
         verify(bookRepository, times(1)).findById("1");
@@ -59,12 +64,10 @@ class BookServiceTest {
 
     @Test
     void testCreateBook() {
-        Book book = new Book(null, "Book Created", "New Author", 2023, null, null);
-        Book savedBook = new Book("1", "Book Created", "New Author", 2023, new Date(), new Date());
-
+        Book savedBook = new Book("1", newBook.getTitle(), newBook.getAuthor(), newBook.getPublicationYear(), new Date(), new Date());
         when(bookRepository.save(any(Book.class))).thenReturn(Mono.just(savedBook));
 
-        StepVerifier.create(bookService.createBook(book))
+        StepVerifier.create(bookService.createBook(newBook))
                 .expectNext(savedBook)
                 .verifyComplete();
 
@@ -73,10 +76,7 @@ class BookServiceTest {
 
     @Test
     void testUpdateBook() {
-        Book existingBook = new Book("1", "Old Title", "Old Author", 2020, new Date(), new Date());
-        Book updatedBook = new Book("1", "Updated Title", "Updated Author", 2023, new Date(), new Date());
-
-        when(bookRepository.findById("1")).thenReturn(Mono.just(existingBook));
+        when(bookRepository.findById("1")).thenReturn(Mono.just(book1));
         when(bookRepository.save(any(Book.class))).thenReturn(Mono.just(updatedBook));
 
         StepVerifier.create(bookService.updateBook("1", updatedBook))

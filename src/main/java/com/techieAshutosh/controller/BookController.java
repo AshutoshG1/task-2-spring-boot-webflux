@@ -25,6 +25,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Mono<Book> getBookById(@PathVariable String id) {
         return bookService.getBookById(id);
 

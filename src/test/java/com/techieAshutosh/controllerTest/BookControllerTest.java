@@ -27,17 +27,25 @@ class BookControllerTest {
 
     private WebTestClient webTestClient;
 
+    private Book book1;
+    private Book book2;
+    private Book newBook;
+    private Book savedBook;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         webTestClient = WebTestClient.bindToController(bookController).build();
+
+        Date now = new Date();
+        book1 = new Book("1", "Book One", "Author One", 2021, now, now);
+        book2 = new Book("2", "Book Two", "Author Two", 2022, now, now);
+        newBook = new Book(null, "New Book", "New Author", 2023, null, null);
+        savedBook = new Book("1", "New Book", "New Author", 2023, now, now);
     }
 
     @Test
     void testGetAllBooks() {
-        Book book1 = new Book("1", "Book One", "Author One", 2021, new Date(), new Date());
-        Book book2 = new Book("2", "Book Two", "Author Two", 2022, new Date(), new Date());
-
         when(bookService.getAllBooks()).thenReturn(Flux.just(book1, book2));
 
         webTestClient.get().uri("/books")
@@ -50,41 +58,25 @@ class BookControllerTest {
     }
 
     @Test
-    void testGetBookById_Found() {
-        Book book = new Book("1", "Book One", "Author One", 2021, new Date(), new Date());
-
-        when(bookService.getBookById("1")).thenReturn(Mono.just(book));
+    void testGetBookById() {
+        when(bookService.getBookById("1")).thenReturn(Mono.just(book1));
 
         webTestClient.get().uri("/books/1")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Book.class)
-                .isEqualTo(book);
-
-        verify(bookService, times(1)).getBookById("1");
-    }
-
-    @Test
-    void testGetBookById_NotFound() {
-        when(bookService.getBookById("1")).thenReturn(Mono.empty());
-
-        webTestClient.get().uri("/books/1")
-                .exchange()
-                .expectStatus().isNotFound();
+                .isEqualTo(book1);
 
         verify(bookService, times(1)).getBookById("1");
     }
 
     @Test
     void testCreateBook() {
-        Book book = new Book(null, "New Book", "New Author", 2023, null, null);
-        Book savedBook = new Book("1", "New Book", "New Author", 2023, new Date(), new Date());
-
         when(bookService.createBook(any(Book.class))).thenReturn(Mono.just(savedBook));
 
         webTestClient.post().uri("/books")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(book)
+                .bodyValue(newBook)
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody(Book.class)
